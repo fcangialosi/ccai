@@ -1,0 +1,3 @@
+[submodule "hwfq"]
+	path = hwfq
+	url = git@github.com:akshayknarayan/hwfq.git
