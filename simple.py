@@ -20,6 +20,8 @@ RATE = 10000000
 QUEUE_SIZE = 150000
 TOPO = "topo1"
 
+btl_rate_mbps = RATE * 8 / 1000000
+
 # topo 1
 # h0: 42.0.0.0/16
 # s1: 42.1.0.0/16
@@ -81,7 +83,7 @@ def run_exp(traffic, qtype, out):
     info( "*** Creating links\n" )
     TCLink(h0, switch0)
     TCLink(s1, switch0)
-    TCLink(h2, switch0, delay='50ms', bw=80)
+    TCLink(h2, switch0, delay='50ms', bw=btl_rate_mbps)
 
     switch0.cmd('sysctl net.ipv4.ip_forward=1')
     switch0.intfs[0].setIP('42.0.0.1/16')
@@ -234,11 +236,12 @@ def run_exp(traffic, qtype, out):
     col += traffic.values()
     for (src,alg) in traffic.items():
         lines = subprocess.check_output(f"tail -n2 {src}.out", shell=True)
+        lines = lines.decode("utf-8").strip().split("\n")
         if 'out-of-order' in lines[1]:
             line = lines[0]
         else:
             line = lines[1]
-        tpt = "".join(line.decode("utf-8").strip().split()[6:7+1])
+        tpt = "".join(line.split()[6:7+1])
         col += [f"{tpt}"]
 
     out.write(" ".join(col) + "\n")
@@ -273,8 +276,8 @@ if __name__ == '__main__':
     out = open('exp.out', 'a')
     out.write("qtype duration topo alg0 alg3 alg4 tpt0 tpt3 tpt4\n")
     exp_num = 1
-    for qtype in ['hwfq', 'fifo']:
-        for c in list(combinations):
+    for qtype in ['hwfq', 'drr']: #, 'fifo']:
+        for c in list(combinations)[:1]:
             info(f">>> #{exp_num}/{len(combinations)}: {c}, {qtype} <<<\n")
             traffic = {
                 'h0' : c[0],
