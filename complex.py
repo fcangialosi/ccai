@@ -191,11 +191,11 @@ def run_exp(exp_num, traffic, qtype, run_dir, out):
             hwfq_err = os.path.join(run_dir, 'hwfq.err')
             if qtype == "hwfq":
                 hwfq_proc = t2u1.popen(
-                    f"sudo env RUST_LOG=trace /home/ubuntu/hwfq/target/release/hwfq -i {link.intf1.name} -r {RATE} --scheduler hwfq --weights-cfg complex.yaml -q {QUEUE_SIZE} > {hwfq_out} 2> {hwfq_err}",
+                    f"sudo env RUST_LOG=trace /home/ubuntu/ccai/hwfq/target/release/hwfq -i {link.intf1.name} -r {RATE} --scheduler hwfq --weights-cfg complex.yaml -q {QUEUE_SIZE} > {hwfq_out} 2> {hwfq_err}",
                     shell=True)
             elif qtype == "drr":
                 hwfq_proc = t2u1.popen(
-                    f"sudo env RUST_LOG=trace /home/ubuntu/hwfq/target/release/hwfq -i {link.intf1.name} -r {RATE} --scheduler drr -q {QUEUE_SIZE} > {hwfq_out} 2> {hwfq_err}",
+                    f"sudo env RUST_LOG=trace /home/ubuntu/ccai/hwfq/target/release/hwfq -i {link.intf1.name} -r {RATE} --scheduler drr -q {QUEUE_SIZE} > {hwfq_out} 2> {hwfq_err}",
                     shell=True)
             sleep(2)
             t2u1.cmdPrint(f'ip route del 43.0.0.0/8 dev {link.intf1.name}')
